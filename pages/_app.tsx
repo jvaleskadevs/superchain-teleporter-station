@@ -4,29 +4,36 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import type { AppProps } from 'next/app';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
-  arbitrum,
+  baseGoerli,
   goerli,
   mainnet,
   optimism,
+  optimismGoerli,
   polygon,
+  polygonMumbai,
   zora,
+  zoraTestnet
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
+    baseGoerli,
+    goerli,
     mainnet,
-    polygon,
     optimism,
-    arbitrum,
+    optimismGoerli,
+    polygon,
+    polygonMumbai,
     zora,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
+    zoraTestnet
   ],
-  [publicProvider()]
+  [publicProvider(), alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID })]
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'RainbowKit App',
+  appName: 'Teleporter',
   projectId: 'YOUR_PROJECT_ID',
   chains,
 });
