@@ -11,8 +11,9 @@ export default function ConstructorArgsForm({ params, onSubmit }: Props) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(args);
-    if (args.length > 0) {
-      console.log(args);
+    
+    if (args.length === params.length) {
+
       onSubmit(args);
     }
   }
@@ -24,7 +25,7 @@ export default function ConstructorArgsForm({ params, onSubmit }: Props) {
   }
   
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 mb-8">
       <div className="form-control w-full max-w-xs">
         <h2>Constructor Arguments</h2>
         { (params ?? []).map((param, idx) => (      

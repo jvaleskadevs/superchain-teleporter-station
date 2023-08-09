@@ -2,11 +2,13 @@ import '../styles/globals.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import type { AppProps } from 'next/app';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { configureChains, createConfig, WagmiConfig, Chain } from 'wagmi';
+
 import {
   baseGoerli,
   goerli,
   mainnet,
+  //modeTestnet,
   optimism,
   optimismGoerli,
   polygon,
@@ -22,6 +24,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
     baseGoerli,
     goerli,
     mainnet,
+    //modeTestnet,
     optimism,
     optimismGoerli,
     polygon,

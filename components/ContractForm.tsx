@@ -22,7 +22,7 @@ export default function ContractForm({ onSubmit }: Props) {
   }
   
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 mb-8">
       <div className="form-control w-full max-w-xs">
         <h2>Contract Details</h2>
         <label className="label" htmlFor="fromChainId">
@@ -36,13 +36,16 @@ export default function ContractForm({ onSubmit }: Props) {
         >
           <option value="1">Ethereum Mainnet</option>
           <option value="5">Ethereum Goerli</option>
+          <option value="58008">Ethereum Sepolia</option>
           <option value="137">Polygon PoS</option>
           <option value="80001">Polygon Mumbai</option>
-          <option value="">Optimism Mainnet</option>
+          <option value="10">Optimism Mainnet</option>
           <option value="420">Optimism Goerli</option>
-          <option value="7777777">Zora Mainnet</option>
-          <option value="">Zora Testnet</option>
-          <option value="">Base Goerli</option>
+          <option value="7777777">Zora</option>
+          <option value="999">Zora Testnet</option>
+          <option value="8453">Base</option>
+          <option value="84531">Base Goerli</option>
+          <option value="919">Mode Testnet</option>
         </select>
         
         <label className="label" htmlFor="toChainId">
@@ -56,13 +59,16 @@ export default function ContractForm({ onSubmit }: Props) {
         >
           <option value="1">Ethereum Mainnet</option>
           <option value="5">Ethereum Goerli</option>
+          <option value="58008">Ethereum Sepolia</option>
           <option value="137">Polygon PoS</option>
           <option value="80001">Polygon Mumbai</option>
-          <option value="">Optimism Mainnet</option>
-          <option defaultValue value="420">Optimism Goerli</option>
-          <option value="7777777">Zora Mainnet</option>
-          <option value="">Zora Testnet</option>
-          <option value="">Base Goerli</option>
+          <option value="10">Optimism Mainnet</option>
+          <option value="420">Optimism Goerli</option>
+          <option value="7777777">Zora</option>
+          <option value="999">Zora Testnet</option>
+          <option value="8453">Base</option>
+          <option value="84531">Base Goerli</option>
+          <option value="919">Mode Testnet</option>
         </select>
         
         <label className="label" htmlFor="contractAddress">
@@ -77,7 +83,7 @@ export default function ContractForm({ onSubmit }: Props) {
         />
       </div>
       <button type="submit" className="btn btn-primary btn-wide">
-        Continue
+        Summon
       </button>
     </form>
   );
