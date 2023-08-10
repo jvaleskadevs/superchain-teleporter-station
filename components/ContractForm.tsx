@@ -41,11 +41,11 @@ export default function ContractForm({ onSubmit }: Props) {
           <option value="80001">Polygon Mumbai</option>
           <option value="10">Optimism Mainnet</option>
           <option value="420">Optimism Goerli</option>
-          <option value="7777777">Zora</option>
-          <option value="999">Zora Testnet</option>
+          {/*<option value="7777777">Zora</option>*/}
+          {/*<option value="999">Zora Testnet</option>*/}
           <option value="8453">Base</option>
           <option value="84531">Base Goerli</option>
-          <option value="919">Mode Testnet</option>
+          {/*<option value="919">Mode Testnet</option>*/}
         </select>
         
         <label className="label" htmlFor="toChainId">

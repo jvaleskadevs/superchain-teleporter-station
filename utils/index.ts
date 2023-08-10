@@ -5,12 +5,34 @@ import {
   goerli,
   polygon,
   zora, 
-  zoraTesnet, 
+  zoraTestnet, 
   optimism, 
   optimismGoerli, 
   baseGoerli,
-  base
+  base,
+  Chain
 } from 'viem/chains';
+const modeTestnet = {
+  id: 919,
+  name: 'Mode Testnet',
+  network: 'mode-testnet',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://sepolia.mode.network'],
+    },
+    public: {
+      http: ['https://sepolia.mode.network'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Blockscout',
+      url: 'https://sepolia.explorer.mode.network',
+    },
+  },
+  testnet: true,
+} as const satisfies Chain;
 /**
   *   This helps us building the endpoints for the different chains,
   *   we are leveraging the contracts endpoints of the Etherscan/Blockscout RPC APIs
@@ -39,23 +61,17 @@ export const buildEndpoint = (endpoint: string, contract: string, chainId: strin
       scan = 'api-goerli-optimistic.etherscan.io';
       key = process.env.NEXT_PUBLIC_OPSCAN;
       break;   
-/*
     case 919:
-      scan = '';
+      scan = 'sepolia.explorer.mode.network';
       key = process.env.NEXT_PUBLIC_MODESCAN;
       break; 
     case 999:
-      scan = '';
+      scan = 'testnet.explorer.zora.energy';
       key = process.env.NEXT_PUBLIC_ZORASCAN;
       break; 
-*/
     case 8453:
       scan = 'api.basescan.org';
       key = process.env.NEXT_PUBLIC_BASESCAN;
-      break;
-    case 58008:
-      scan = 'api-sepolia.etherscan.io';
-      key = process.env.NEXT_PUBLIC_ETHERSCAN;
       break;
     case 80001:
       scan = 'api-testnet.polygonscan.com';
@@ -65,12 +81,14 @@ export const buildEndpoint = (endpoint: string, contract: string, chainId: strin
       scan = 'api-goerli.basescan.org';
       key = process.env.NEXT_PUBLIC_BASESCAN;
       break;
-/*
     case 7777777:
-      scan = '';
+      scan = 'explorer.zora.energy';
       key = process.env.NEXT_PUBLIC_ZORASCAN;
       break;
-*/
+    case 11155111:
+      scan = 'api-sepolia.etherscan.io';
+      key = process.env.NEXT_PUBLIC_ETHERSCAN;
+      break;
     default:
       scan = 'api-sepolia.etherscan.io';
       key = process.env.NEXT_PUBLIC_ETHERSCAN;      
@@ -91,7 +109,23 @@ export const buildEndpoint = (endpoint: string, contract: string, chainId: strin
 }
 
 export const buildVerificationData = (contractInfo, constructorArgs) => {
-  return `&sourceCode=${contractInfo.SourceCode.replace(/\+/g, '%2B')}&contractname=${contractInfo.ContractName}&codeformat=solidity-single-file&compilerversion=${contractInfo.CompilerVersion.replace(/\+/g, '%2B')}&optimizationUsed=${contractInfo.OptimizationUsed}&runs=${contractInfo.Runs}&constructorArguments=${constructorArgs.replace('0x', '')}&evmversion=${contractInfo.EVMVersion}&licenseType=${contractInfo.LicenseType}&libraryname1=&libraryaddress1=&libraryname2=&libraryaddress2=&libraryname3=&libraryaddress3=&libraryname4=&libraryaddress4=&libraryname5=&libraryaddress5=&libraryname6=&libraryaddress6=&libraryname7=&libraryaddress7=&libraryname8=&libraryaddress8=&libraryname9=&libraryaddress9=&libraryname10=&libraryaddress10=`;
+  let sourceCode;
+  let contractName;
+  let codeFormat;
+  if (contractInfo.SourceCode.startsWith('{{')) {
+    codeFormat = 'solidity-standard-json-input';
+    sourceCode = contractInfo.SourceCode.replace(/\+/g, '%2B').slice(1).slice(0, -1);
+    Object.entries(JSON.parse(sourceCode)?.sources).forEach(([key, _]) => {
+      if (key.includes(contractInfo.ContractName)) {
+        contractName = `${key}:${contractInfo.ContractName}`;
+      };
+    });
+  } else {
+    codeFormat = 'solidity-single-file';
+    sourceCode = contractInfo.SourceCode.replace(/\+/g, '%2B');
+    contractName = contractInfo.ContractName;
+  }
+  return `&sourceCode=${sourceCode}&contractname=${contractName}&codeformat=${codeFormat}&compilerversion=${contractInfo.CompilerVersion.replace(/\+/g, '%2B')}&optimizationUsed=${contractInfo.OptimizationUsed}&runs=${contractInfo.Runs}&constructorArguments=${constructorArgs.replace('0x', '')}&evmversion=${contractInfo.EVMVersion}&licenseType=${contractInfo.LicenseType}&libraryname1=&libraryaddress1=&libraryname2=&libraryaddress2=&libraryname3=&libraryaddress3=&libraryname4=&libraryaddress4=&libraryname5=&libraryaddress5=&libraryname6=&libraryaddress6=&libraryname7=&libraryaddress7=&libraryname8=&libraryaddress8=&libraryname9=&libraryaddress9=&libraryname10=&libraryaddress10=`;
 }
 
 /**
@@ -109,27 +143,20 @@ export const getChain = (chainId: number) => {
       return polygon;
     case 420:
       return optimismGoerli;
-/*
     case 919:
       return modeTestnet;
-*/
     case 999:
-      return zoraTesnet;
+      return zoraTestnet;
     case 8453:
       return base;
-    case 58008:
-      return sepolia;
     case 80001:
       return polygonMumbai;
     case 84531:
       return baseGoerli;
     case 7777777:
       return zora;
-/*
-    case 28528:
-      return optimismGoerli;
-*/
-
+    case 11155111:
+      return sepolia;
     default:
       return sepolia; 
   }
