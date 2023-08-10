@@ -9,7 +9,7 @@ import {
   optimism, 
   optimismGoerli, 
   baseGoerli,
-  base,
+  //base,
   Chain
 } from 'viem/chains';
 const modeTestnet = {
@@ -69,10 +69,12 @@ export const buildEndpoint = (endpoint: string, contract: string, chainId: strin
       scan = 'testnet.explorer.zora.energy';
       key = process.env.NEXT_PUBLIC_ZORASCAN;
       break; 
+/*      
     case 8453:
       scan = 'api.basescan.org';
       key = process.env.NEXT_PUBLIC_BASESCAN;
       break;
+*/
     case 80001:
       scan = 'api-testnet.polygonscan.com';
       key = process.env.NEXT_PUBLIC_POLYGONSCAN;
@@ -147,8 +149,10 @@ export const getChain = (chainId: number) => {
       return modeTestnet;
     case 999:
       return zoraTestnet;
+/*
     case 8453:
       return base;
+*/
     case 80001:
       return polygonMumbai;
     case 84531:

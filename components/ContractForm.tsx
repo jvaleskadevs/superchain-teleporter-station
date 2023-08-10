@@ -2,14 +2,14 @@ import { useState } from "react";
 
 interface Props {
   onSubmit: (
-    contractAddress: `0x${string}`, 
+    contractAddress: string, 
     fromChainId: string,
     toChainId: string,
   ) => void;
 }
 
 export default function ContractForm({ onSubmit }: Props) {
-  const [contractAddress, setContractAddress] = useState<`0x${string}`>('');
+  const [contractAddress, setContractAddress] = useState<string>('');
   const [fromChainId, setFromChainId] = useState<string>('1');
   const [toChainId, setToChainId] = useState<string>('420');
   

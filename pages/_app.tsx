@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import type { AppProps } from 'next/app';
-import { configureChains, createConfig, WagmiConfig, Chain } from 'wagmi';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 
 import {
   baseGoerli,
@@ -55,7 +55,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
     zora,
     zoraTestnet
   ],
-  [publicProvider(), alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID })]
+  [publicProvider(), alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID as string})]
 );
 
 const { connectors } = getDefaultWallets({

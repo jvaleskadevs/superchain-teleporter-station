@@ -16,9 +16,9 @@ const Home: NextPage = () => {
   const [fromChainId, setFromChainId] = useState<string>('1');
   const [toChainId, setToChainId] = useState<string>('420');
 
-  const [contractInfo, setContractInfo] = useState();
+  const [contractInfo, setContractInfo] = useState<any>();
   const [creationBytecode, setCreationBytecode] = useState<string>('');
-  const [parsedAbi, setParsedAbi] = useState();
+  const [parsedAbi, setParsedAbi] = useState<any>();
   
   const [constructorArgs, setConstructorArgs] = useState<Array<any>>([]);
   const [newContractAddress, setNewContractAddress] = useState<string>('');
@@ -26,7 +26,7 @@ const Home: NextPage = () => {
   
   const { address } = useAccount();  
   
-  const fetchContractInfo = async (contract: `0x${string}`) => {
+  const fetchContractInfo = async (contract: string) => {
     try {
       const endpoint = buildEndpoint('contract', contract, fromChainId);
       const response = await fetch(endpoint);
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
     }
   }
   
-  const fetchCreationBytecode = async (contract: `0x${string}`) => {
+  const fetchCreationBytecode = async (contract: string) => {
     try {
       const endpoint = buildEndpoint('creation', contract, fromChainId);
       const response = await fetch(endpoint);
@@ -77,18 +77,19 @@ const Home: NextPage = () => {
   }
  
   const deployOnSuperchain = async (constructorArgs) => {
-    if (!address) return;
+    if (!address || !contractInfo) return;
     try {
       const walletClient = createWalletClient({
         chain: getChain(parseInt(toChainId)),
-        transport: custom(window.ethereum)
+        transport: custom((window as any).ethereum)
       });
-      console.log(getChain(parseInt(toChainId)));
+
       const hash = await walletClient.deployContract({
-        abi: JSON.parse(contractInfo.ABI),
+        abi: JSON.parse(contractInfo?.ABI),
         account: address,
+        chain: getChain(parseInt(toChainId)),
         args: constructorArgs.map(arg => arg.value),
-        bytecode: creationBytecode.replace(contractInfo.ConstructorArguments, '')
+        bytecode: creationBytecode.replace(contractInfo.ConstructorArguments, '') as `0x${string}`
       });
       
       console.log(`Contract successfully deployed at transaction: ${hash}`);
@@ -99,7 +100,7 @@ const Home: NextPage = () => {
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       console.log(receipt);
       
-      setNewContractAddress(receipt.contractAddress);
+      setNewContractAddress(receipt?.contractAddress ?? '');
       setConstructorArgs(constructorArgs);
     } catch (err) {
       console.log(err);
@@ -175,7 +176,7 @@ const Home: NextPage = () => {
   }
   
   const onSubmitContractForm = (
-    contractAddress: `0x${string}`,
+    contractAddress: string,
     fromChainId: string,
     toChainId: string
   ) => {
@@ -231,7 +232,7 @@ const Home: NextPage = () => {
         </h1>
         
         <p className={styles.description}>
-         Every Super thing needs a cool transport. Teleporter is the SuperChain's one,<br></br>teleport contracts crossing chains like the real Supers.
+         Every Super thing needs a cool transport. Teleporter is the SuperChain&apos;s one,<br></br>teleport contracts crossing chains like the real Supers.
         </p>
         
         <ContractForm onSubmit={onSubmitContractForm} />
