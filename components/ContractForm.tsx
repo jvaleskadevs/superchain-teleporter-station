@@ -22,15 +22,15 @@ export default function ContractForm({ onSubmit }: Props) {
   }
   
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mb-8">
+    <form onSubmit={handleSubmit} className="space-y-4 m-16">
       <div className="form-control w-full max-w-xs">
-        <h2>Contract Details</h2>
+        <h2 className="uppercase mb-4">Contract Details</h2>
         <label className="label" htmlFor="fromChainId">
-          <span className="label-text">Select origen blockchain</span>
+          <span className="label-text uppercase">Origin</span>
         </label>
         <select
           id="fromChainId"
-          className="input input-bordered w-full max-w-x"
+          className="input input-bordered w-full max-w-x mb-2"
           onChange={(e) => setFromChainId(e.target.value)}
           value={fromChainId}
         >
@@ -49,11 +49,11 @@ export default function ContractForm({ onSubmit }: Props) {
         </select>
         
         <label className="label" htmlFor="toChainId">
-          <span className="label-text">Select destination blockchain</span>
+          <span className="label-text uppercase">destination</span>
         </label>
         <select
           id="toChainId"
-          className="input input-bordered w-full max-w-x"
+          className="input input-bordered w-full max-w-x mb-2"
           onChange={(e) => setToChainId(e.target.value)}
           value={toChainId}
         >
@@ -72,7 +72,7 @@ export default function ContractForm({ onSubmit }: Props) {
         </select>
         
         <label className="label" htmlFor="contractAddress">
-          <span className="label-text">Enter contract address to be teleported</span>
+          <span className="label-text uppercase">contract address to be teleported</span>
         </label>    
         <input
           type="text"
@@ -82,8 +82,8 @@ export default function ContractForm({ onSubmit }: Props) {
           onChange={(e) => setContractAddress(e.target.value)}
         />
       </div>
-      <button type="submit" className="btn btn-primary btn-wide">
-        Summon
+      <button type="submit" className="btn btn-outline btn-warning btn-block uppercase">
+        LOCATE
       </button>
     </form>
   );

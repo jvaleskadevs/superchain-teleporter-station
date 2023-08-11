@@ -116,9 +116,10 @@ export const buildVerificationData = (contractInfo, constructorArgs) => {
   let codeFormat;
   if (contractInfo.SourceCode.startsWith('{{')) {
     codeFormat = 'solidity-standard-json-input';
-    sourceCode = contractInfo.SourceCode.replace(/\+/g, '%2B').slice(1).slice(0, -1);
+    sourceCode = contractInfo.SourceCode.slice(1).slice(0, -1);
+    console.log(sourceCode);
     Object.entries(JSON.parse(sourceCode)?.sources).forEach(([key, _]) => {
-      if (key.includes(contractInfo.ContractName)) {
+      if (key.includes(`/${contractInfo.ContractName}.sol`)) {
         contractName = `${key}:${contractInfo.ContractName}`;
       };
     });

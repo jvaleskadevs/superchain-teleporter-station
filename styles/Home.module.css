@@ -1,5 +1,7 @@
 .container {
   padding: 0 2rem;
+  background-image: url('/background.png');
+  background-size: cover;
 }
 
 .main {
@@ -10,6 +12,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: rgba(0, 0, 0, 0.66);
 }
 
 .footer {
@@ -19,6 +22,7 @@
   border-top: 1px solid #eaeaea;
   justify-content: center;
   align-items: center;
+  background: rgba(0, 0, 0, 0.66);
 }
 
 .footer a {
@@ -30,6 +34,8 @@
 
 .title a {
   color: #0d76fc;
+  color: #9f00ff;
+  color: #d5d5d5;
   text-decoration: none;
 }
 
@@ -40,9 +46,12 @@
 }
 
 .title {
-  margin: 3rem 0;
+  margin: 3.33rem 0;
   line-height: 1;
-  font-size: 2.5rem;
+  font-size: 2.66rem;
+  color: #6f00ff;
+    color: #d5d5d5;
+  letter-spacing: 0.16rem;
 }
 
 .title,
@@ -52,8 +61,16 @@
 
 .description {
   margin: 0 0 2rem;
-  line-height: 1.5;
-  font-size: 1.5rem;
+  margin-bottom: 3rem;
+  line-height: 1.33;
+  font-size: 1.33rem;
+  opacity: 0.75;
+  letter-spacing: 0.33rem;
+}
+
+.description span {
+  color:red;
+  font-weight: bold;
 }
 
 .grid {

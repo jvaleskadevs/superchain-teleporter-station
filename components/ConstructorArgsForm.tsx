@@ -12,9 +12,9 @@ export default function ConstructorArgsForm({ params, onSubmit }: Props) {
     e.preventDefault();
     console.log(args);
     
-    if (args.length === params.length) {
+    if (args?.length === params?.length) {
 
-      onSubmit(args);
+      onSubmit(args ?? []);
     }
   }
   
@@ -25,13 +25,18 @@ export default function ConstructorArgsForm({ params, onSubmit }: Props) {
   }
   
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mb-8">
+    <form onSubmit={handleSubmit} className="space-y-4 mb-8 flex flex-col justify-center items-center">
       <div className="form-control w-full max-w-xs">
-        <h2>Constructor Arguments</h2>
+        <h2 className="uppercase">
+          { params && params.length > 0 
+              ? 'Constructor Arguments' 
+              : 'CONTRACT READY FOR TELEPORTATION'
+          }  
+        </h2>
         { (params ?? []).map((param, idx) => (      
             <div key={param.name}>  
               <label className="label" htmlFor={param.name}>
-                <span className="label-text">{param.name}</span>
+                <span className="label-text uppercase">{param.name}</span>
               </label>
               <input
                 type="text"
@@ -42,7 +47,7 @@ export default function ConstructorArgsForm({ params, onSubmit }: Props) {
             </div>
           ))}
       </div>
-      <button type="submit" className="btn btn-primary btn-wide">
+      <button type="submit" className="btn btn-outline btn-warning btn-wide uppercase">
         Teleport
       </button>
     </form>

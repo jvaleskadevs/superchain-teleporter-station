@@ -23,6 +23,7 @@ const Home: NextPage = () => {
   const [constructorArgs, setConstructorArgs] = useState<Array<any>>([]);
   const [newContractAddress, setNewContractAddress] = useState<string>('');
   const [isNewContractVerified, setIsNewContractVerified] = useState<boolean>(false);
+  const [showDeploymentDetails, setShowDeploymentDetails] = useState<boolean>(false);
   
   const { address } = useAccount();  
   
@@ -113,8 +114,8 @@ const Home: NextPage = () => {
       const data = buildVerificationData(
         contractInfo, 
         encodeAbiParameters(
-          parsedAbi?.constructor.inputs, 
-          constructorArgs.map(arg => arg.value)
+          parsedAbi?.constructor.inputs ?? [], 
+          (constructorArgs ?? []).map(arg => arg.value)
         )
       );
       const response = await fetch(endpoint, {
@@ -139,8 +140,10 @@ const Home: NextPage = () => {
     }
   }
   // 0xa2f729AAEA2434E4E1bb3455fe1D2eB172058D8a goerli supercontract
+  // 0xBb7ca7a34cE4D4808385c117101657026d861292 baseG supercontract
   // 0xFee1360fe085557D16c47124e1324517cF43B7B9 goerli supercontract args
   // 0x5B95D080F83c4a69E3C5462f90AD569DCC31794e optimismG supercontract
+  // 0x42c500eFe11424f479dE18C4095537478511BeB3 optimismG supercontract args imports
   // 0x8a3f0a10f4f168fb817bfa9a0f8cff8db2d133cf baseG supercontract args
   // 0x9bcc6bd2a72af329e28fe3df632b4db89a4ee9a7 optimismG supercontract args
   // 0x97aBfD858Cdac2d099116309B178452bA4025112 sepolia supercontract args imports
@@ -148,6 +151,8 @@ const Home: NextPage = () => {
   // 0x569c819df088b7947f9db31f3271fe7cb92bca11 zoraT supercontract args imports
   // 0x569c819df088b7947f9db31f3271fe7cb92bca11 baseG fail from zoraT
   // 0x8A3F0A10F4f168FB817BFa9A0F8cFF8dB2d133cf modeT supercontract args imports
+  // 0x83Bf9F56E703A87fC05eabB6933E1A8D5ceC87f3 zoraT EAS
+  // 0xBb7ca7a34cE4D4808385c117101657026d861292 zoraT EAS Registry
   
   const checkVerificationStatus = async (guid: string) => {
     try {
@@ -160,14 +165,16 @@ const Home: NextPage = () => {
         console.log(json.result);
         if (json.result === 'Pass - Verified') {
           setIsNewContractVerified(true);
-        } else if (json.result === 'Pending in queue') {
+        } else if (json.result === 'Pending in queue' || json.result === 'Unknown UID') {
           // delay some seconds and retry, blockscout
           setTimeout(async () => await checkVerificationStatus(guid), 7777);          
         }
       } else if (json.result === 'Pending in queue') {
         // delay some seconds and retry, etherscan
         setTimeout(async () => await checkVerificationStatus(guid), 7777);        
-      } else {
+      } else if (json.result === 'Already Verified') {
+        setIsNewContractVerified(true);
+      }else {
         console.log("Error checking verification status");
       }      
     } catch (err) {
@@ -183,6 +190,12 @@ const Home: NextPage = () => {
     setFromChainId(fromChainId);
     setToChainId(toChainId);
     setContractAddress(contractAddress);
+  }
+  
+  const openDeploymentDetails = () => {
+    setShowDeploymentDetails(
+      prevShowDeploymentDetails => !prevShowDeploymentDetails
+    );
   }
   
   // first trigger
@@ -225,15 +238,17 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <ConnectButton />
+        
 
         <h1 className={styles.title}>
-          Welcome to <a href="">Teleporter</a>
+          <small>WELCOME TO</small> <a href="">TELEPORTER</a>
         </h1>
         
-        <p className={styles.description}>
-         Every Super thing needs a cool transport. Teleporter is the SuperChain&apos;s one,<br></br>teleport contracts crossing chains like the real Supers.
+        <p className={` uppercase ${styles.description}`}>
+         Every <span>Super</span> thing needs a cool transport. <span>Teleporter</span> is the SuperChain&apos;s one,<br></br>teleport contracts crossing chains like the real Supers.
         </p>
+        
+        <ConnectButton />
         
         <ContractForm onSubmit={onSubmitContractForm} />
         { parsedAbi && 
@@ -243,9 +258,48 @@ const Home: NextPage = () => {
           />
         }
         
-        { newContractAddress && <p>Contract teleported to {newContractAddress} on {getChain(parseInt(toChainId)).name}</p> }
+        { newContractAddress && <p>CONTRACT TELEPORTED TO {newContractAddress} ON {getChain(parseInt(toChainId)).name.toUpperCase()}</p> }
         
-        { isNewContractVerified && <p>Contract successfully Verified</p> }
+        { (newContractAddress && isNewContractVerified) && (
+            <p className="uppercase">Contract successfully Verified</p>
+          ) }
+          
+        { contractInfo && (
+            <button 
+              className="btn-outline uppercase mt-8"
+              onClick={openDeploymentDetails}
+            >
+              See deployment details
+            </button> 
+        )}
+            
+          
+        { showDeploymentDetails && (
+            <div className="mt-4 flex flex-col w-full items-center justify-center">
+              <p className="uppercase mt-2">Contract Name</p>
+              <p className="uppercase text-red-500">{contractInfo?.ContractName ?? '-'}</p>
+              <p className="uppercase mt-2">Compiler Version</p>
+              <p className="text-red-500">{contractInfo?.CompilerVersion ?? '-'}</p>
+              <p className="uppercase mt-2">Runs</p>
+              <p className="text-red-500">{contractInfo?.Runs ?? '-'}</p>
+              <p className="uppercase mt-2">Optimizations</p>
+              <p className="text-red-500">{contractInfo?.OptimizationUsed ?? '-'}</p>
+              <p className="uppercase mt-2">License</p>
+              <p className="uppercase text-red-500">{contractInfo?.LicenseType ?? '-'}</p>
+              <p className="uppercase mt-2">Constructor Args</p>
+              <>
+                {(constructorArgs ?? []).map(arg => (
+                  <>
+                    <p className="uppercase mt-2">{arg.name}</p>
+                    <p className="uppercase text-red-500">{arg.value}</p>
+                  </>
+                ))}
+              </>
+              <p className="uppercase mt-2">SOURCE CODE</p>
+              <p><small>{contractInfo?.SourceCode.slice(1).slice(0, -1) ?? ''}</small></p>
+            </div>
+        )}
+        
 {/*
         <div className={styles.grid}>
           <a className={styles.card} href="https://rainbowkit.com">
@@ -292,8 +346,8 @@ const Home: NextPage = () => {
       </main>
 
       <footer className={styles.footer}>
-        <a href="https://rainbow.me" rel="noopener noreferrer" target="_blank">
-          Made with 💜 by J. Valeska
+        <a href="https://github.com/jvaleskadevs/superchain-teleporter-station" rel="noopener noreferrer" target="_blank">
+         MADE WITH 💜 BY J. VALESKA
         </a>
       </footer>
     </div>
